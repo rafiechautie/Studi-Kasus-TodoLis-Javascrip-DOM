@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todolist</title>
+</head>
+<body>
+    <form name="todoForm">
+        <table>
+            <tbody>
+                <tr>
+                    <td><label for="todo">Todo:</label></td>
+                    <td><input type="text" id="todo" name="todo"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="Add"></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+
+    <h1>Todolist Kamu</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Filter</th>
+                <th><input type="text" id="search" name="search"></th>
+            </tr>
+        </thead>
+        <tbody id="todolistBody">
+            <tr>
+                <td><input type="button" value="Done"></td>
+                <td>Todo Description</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+<script>
+
+    //buat variable untuk menampung data todolist sekalian tambahakn data defaultnya
+    const todoList = [
+        "Belajar Javascript Dasar",
+        "Belajar Javascript OOP",
+        "Belajar Javascript DOM"
+    ]
+
+    //fungsi untuk menghapus seluruh element di dalam table sebelum di display
+    function clearTodoList(){
+        const todolistBody = document.getElementById("todolistBody")
+        //selama firstchild di dalam todolist masih ada maka kita akan menghapus seluruh child yang ada di todolistBody
+        while(todolistBody.firstChild){
+            todolistBody.removeChild(todolistBody.firstChild)
+        }
+    }
+
+    function removeTodolist(index){
+        //menghapus value todo sesuai dengan indexnya dan hanya 1 record yang dihapus
+        todoList.splice(index, 1)
+        displayTodolist()
+    }
+
+    function addTodoList(index, todo){
+            //buat element html tr melalui dom
+            const tr = document.createElement("tr")
+            //buat element html td melalui dom
+            const tdButton = document.createElement("td")
+            //masukkan element td ke dalam element tr
+            tr.appendChild(tdButton)
+
+            /*
+            *membuat button "done" disamping todolist
+            */
+            
+            //buat element html input 
+            const buttonDone = document.createElement("input")
+            //buat agar type element html input ialah button
+            buttonDone.type = "button"
+            //buat agar value element html input adalah done
+            buttonDone.value = "Done"
+            //tambahkan aksi ketika input dengan value done diclick
+            buttonDone.onclick = function(){
+                removeTodolist(index)
+            }
+            //tambahkan variable buttonDone ke dalam tBody
+            tdButton.appendChild(buttonDone)
+
+            //buat element td melalui dom
+            const tdTodo = document.createElement("td")
+            //masukkan value todo ke dalam td
+            tdTodo.textContent = todo
+            //masukkan td ke dalam element html tr
+            tr.appendChild(tdTodo)
+            
+            //ambil element html tbody yang idnya todolistBody
+            const todolistBody = document.getElementById("todolistBody")
+            //tarok element html yang sebelumnya udah dibuat ke tbody
+            todolistBody.appendChild(tr)
+    }
+
+    function displayTodolist(){
+
+        //hapus element child di dalam tbody setiap ingin display todolist
+        clearTodoList()
+
+        //kita bakal iterasikan variable todolist dan kita tampilkan di html
+        for(let i = 0; i < todoList.length; i++){
+            //masukkan value di dalam array ke variable todo
+            const todo = todoList[i]
+
+            //ambil value yang ada di dalam element html yang idnya search dan ubah menjadi lowercase
+            const searchText = document.getElementById("search").value.toLowerCase()
+
+            //ambil value yang ada di variable todo dan ubah ke lowercase juga sekaligus cek apakah ada value yang sama dengan yang ada di variable searchText
+            if(todo.toLowerCase().includes(searchText)){
+                addTodoList(i, todo)
+            }
+
+
+        }
+    }
+
+
+    document.forms['todoForm'].onsubmit = function(event){
+
+        //menghilangkan habit dari input dengan type "submit"
+        //mencegah agar data di form tidak dikirim ke url
+        event.preventDefault()
+
+        //ambil value yang diinput di todoForm dengan name todo
+        const todo = document.forms['todoForm']['todo'].value
+
+        //value todo ditarok ke variable todoList
+        todoList.push(todo)
+
+        //reset form todoForm
+        document.forms['todoForm'].reset()
+
+        console.info(todoList)
+        displayTodolist()
+
+    }
+
+    //ambil element html yang idnya search
+    const searchInput = document.getElementById("search")
+    //berikan sebuah aksi ketika keyUp
+    searchInput.onkeyup = function(){
+        displayTodolist()
+    }
+
+    //berikan sebuah aksi ketika keydown
+    searchInput.onkeydown = function(){
+        displayTodolist()
+    }
+
+    displayTodolist()
+
+</script>
+</body>
+</html>
